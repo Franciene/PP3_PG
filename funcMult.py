@@ -4,8 +4,8 @@ def multMatriz(m1, m2):
       for j in range (4):
           soma = 0
           for k in range (4):
-              soma += m1[j][k] * m2[k][j]
-          matrizResult[i][j] = soma
+              soma += m1[j][k] * m2[k][i]
+          matrizResult[j][i] = soma
     
   return (matrizResult);    
 
