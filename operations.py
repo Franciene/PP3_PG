@@ -3,23 +3,22 @@ def multMatriz(m1, m2):
 
     for i in range(4):
         for j in range(4):
-            soma = 0
+            soma = 0;
             for k in range(4):
-
-                soma += m1[j][k] * m2[k][i]
-            matrizResult[j][i] = soma
+                soma += m1[j][k] * m2[k][i];
+            matrizResult[j][i] = soma;
 
     return matrizResult
 
 
 def mult_vetor_matriz(v, m):
-    vetor_result = [0] * 4
+    vetor_result = [0] * 4;
 
     for j in range(4):
-        soma = 0
+        soma = 0;
         for k in range(4):
-            soma += m[j][k] * v[k]
-        vetor_result[j] = soma
+            soma += m[j][k] * v[k];
+        vetor_result[j] = soma;
 
     # if vetor_result[3] != 1:
     #     for i in range(4):
@@ -49,10 +48,8 @@ def minus_vetorial(v1, v2):
     return result;        
 
 def modulo_vetorial(v):
-    v[0] = abs(v[0]);
-    v[1] = abs(v[1]);
-    v[2] = abs(v[2]);
-    return v;
+    result = ((v[0] * v[0]) + (v[1] * v[1]) + (v[2] * v[2])) * ((v[0] * v[0]) + (v[1] * v[1]) + (v[2] * v[2])) * 0.5;
+    return result;
     
 
 
