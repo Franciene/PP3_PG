@@ -1,4 +1,4 @@
-from funcMult import multMatriz, mult_vetor_matriz
+from operations import multMatriz, mult_vetor_matriz
 import math
 
 class Object:
