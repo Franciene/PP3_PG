@@ -20,12 +20,11 @@ def mult_vetor_matriz(v, m):
             soma += m[j][k] * v[k];
         vetor_result[j] = soma;
 
-    # if vetor_result[3] != 1:
-    #     for i in range(4):
-    #         vetor_result[i] = vetor_result[i] / vetor_result[3]
+    if vetor_result[3] != 1:
+        for i in range(4):
+            vetor_result[i] = vetor_result[i] / vetor_result[3]
 
     return vetor_result[0:3]
-
 
 def product_vetorial(v1, v2):
     result = [0] * 3
@@ -52,5 +51,5 @@ def minus_vetorial(v1, v2):
 
 
 def modulo_vetorial(v):
-    result = (v[0] ** 2 + v[1] ** 2 + v[2] ** 2) ** 0.5;
-    return result;
+    result = (v[0] ** 2 + v[1] ** 2 + v[2] ** 2) ** 0.5
+    return result
