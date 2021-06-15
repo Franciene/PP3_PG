@@ -1,4 +1,4 @@
-# Projeto de Computação Gráfica
+# Projeto de Processamento Gráfico
 
 Este projeto constrói o pipeline de visualização de dois objetos no formato wavefront em uma cena.
 
