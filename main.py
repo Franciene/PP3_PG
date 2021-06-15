@@ -1,3 +1,4 @@
+from ImageGenerator import gerar_imagem
 from Object import Object
 from Cenario import Cenario
 
@@ -11,8 +12,13 @@ vaso.rotacao(grau_z=-102)
 vaso.translacao(offset_x=22.31, offset_z=4.02, offset_y=4.13)
 
 cenario = Cenario()
-cenario.cena = [vaso, mesa]
-cenario.setCamera(e=[21, 4.625, 15], g=[21, 4.625, 3.85], t=[0, 1, 0])
+cenario.cena = [mesa, vaso]
+cenario.setCamera(e=[21, 10, 15], g=[21, 4.625, 3.85], t=[0, 1, 0])
 cenario.setProjecao(fov=60, ratio=1, z_near=0, z_far=15)
+cenario.translacao(1, 1, 1)
+cenario.escala(500, 500)
 cenario.transforma_cena()
+
+gerar_imagem(cenario, 1000, 1000)
+
 cenario.salvar_cenario()

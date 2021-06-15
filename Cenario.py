@@ -42,6 +42,23 @@ class Cenario:
             objeto.transformacao = multMatriz(self.transformacao, objeto.transformacao)
             objeto.transformar()
 
+    def translacao(self, offset_x=0, offset_y=0, offset_z=0):
+        """Move um objeto na cena. Deve ser passado a variação a ser realizada nos eixos."""
+        matriz = [[1, 0, 0, offset_x],
+                  [0, 1, 0, offset_y],
+                  [0, 0, 1, offset_z],
+                  [0, 0, 0, 1]]
+        self.transformacao = multMatriz(matriz, self.transformacao)
+
+    def escala(self, prop_x=1, prop_y=1, prop_z=1):
+        """Expande ou contrai um objeto na cena. Deve ser passado a variação a ser realizada nos eixos."""
+        matriz = [[prop_x, 0, 0, 0],
+                  [0, prop_y, 0, 0],
+                  [0, 0, prop_z, 0],
+                  [0, 0, 0, 1]]
+        self.transformacao = multMatriz(matriz, self.transformacao)
+
+
     def salvar_cenario(self):
         k = 0
         for objeto in self.cena:
