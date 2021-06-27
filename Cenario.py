@@ -1,5 +1,4 @@
-from operations import product_vetorial, division_vetorial, minus_vetorial, modulo_vetorial, multMatriz, \
-    mult_vetor_matriz
+from operations import product_vetorial, division_vetorial, minus_vetorial, modulo_vetorial, multMatriz
 import math
 
 
@@ -13,21 +12,18 @@ class Cenario:
                                [0, 0, 0, 1]]
 
     def setCamera(self, e, g, t):
-        n = division_vetorial(minus_vetorial(g, e), modulo_vetorial(minus_vetorial(g, e)));
-
-        u = division_vetorial(product_vetorial(t, n), modulo_vetorial(product_vetorial(t, n)));
-
-        v = product_vetorial(n, u);
-
+        n = division_vetorial(minus_vetorial(g, e), modulo_vetorial(minus_vetorial(g, e)))
+        u = division_vetorial(product_vetorial(t, n), modulo_vetorial(product_vetorial(t, n)))
+        v = product_vetorial(n, u)
         R = [[*u, 0],
              [*v, 0],
              [*n, 0],
-             [0, 0, 0, 1]];
+             [0, 0, 0, 1]]
         T = [[1, 0, 0, -e[0]],
              [0, 1, 0, -e[1]],
              [0, 0, 1, -e[2]],
-             [0, 0, 0, 1]];
-        self.transformacao = multMatriz(R, T);
+             [0, 0, 0, 1]]
+        self.transformacao = multMatriz(R, T)
 
     def setProjecao(self, fov, ratio, z_near, z_far):
         tangente = math.sin(fov * math.pi / 180)
@@ -39,7 +35,9 @@ class Cenario:
 
     def transforma_cena(self):
         for objeto in self.cena:
-            objeto.transformacao = multMatriz(self.transformacao, objeto.transformacao)
+            objeto.transformar()
+            objeto.normal_vertices()
+            objeto.transformacao = self.transformacao
             objeto.transformar()
 
     def translacao(self, offset_x=0, offset_y=0, offset_z=0):
@@ -57,7 +55,6 @@ class Cenario:
                   [0, 0, prop_z, 0],
                   [0, 0, 0, 1]]
         self.transformacao = multMatriz(matriz, self.transformacao)
-
 
     def salvar_cenario(self):
         k = 0

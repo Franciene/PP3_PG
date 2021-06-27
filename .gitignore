@@ -1,3 +1,5 @@
 .idea/
 *.obj
 __pycache__/
+*.png
+!Gato invisível.png

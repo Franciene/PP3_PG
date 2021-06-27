@@ -1,10 +1,12 @@
 from PIL import Image, ImageColor
+from operations import multMatriz, mult_vetor_matriz, product_vetorial, minus_vetorial, mult_escalar_vetorial, \
+    modulo_vetorial
 import math
 
 
 def gerar_imagem(cenario, largura, altura):
     im = Image.new('RGB', (largura, altura))  # create the Image of size 1 pixel
-    colors = [ImageColor.getrgb('#8F6332'), ImageColor.getrgb('#79C0DB')]
+    colors = [ImageColor.getrgb("hsl(32, 48.2%, 37.8%)"), ImageColor.getrgb("hsl(197, 57.6%, 66.7%)")]
 
     for i in range(len(cenario.cena)):
         objeto = cenario.cena[i]
@@ -16,7 +18,7 @@ def gerar_imagem(cenario, largura, altura):
             p3 = objeto.vertices[p3_idx - 1]
             rasteriza_face(im, p1, p2, p3, color)
 
-    im.save('Gato invisível malha.png')
+    im.save('Gato invisível.png')
 
 
 def rasteriza_face(im, p1, p2, p3, color):
@@ -72,6 +74,14 @@ def inc_line(image, x1, y1, x2, y2, color, lista_y, min_x):
 def draw_line(image, x, y1, y2, color):
     for i in range(int(abs(y1 - y2)) + 1):
         image.putpixel((int(x), int(y2 + i)), color)
+
+
+def intensidade_luz(objeto, fonte, intensidade):
+    """Retorna um vetor de intensidade de todos os vértices"""
+    for normal in objeto.normais:
+        coef_difusa = 10
+        cos_theta = mult_escalar_vetorial(fonte, normal) / (modulo_vetorial(fonte) * modulo_vetorial(normal))
+        difusa = intensidade * coef_difusa * cos_theta
 
 
 if __name__ == '__main__':
