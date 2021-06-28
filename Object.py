@@ -1,4 +1,4 @@
-from operations import multMatriz, mult_vetor_matriz, product_vetorial, minus_vetorial
+from operations import multMatriz, mult_vetor_matriz, product_vetorial, minus_vetorial, unitarizador
 import math
 
 
@@ -110,5 +110,7 @@ class Object:
             media[0][i] = media[0][i] / media[3][i]
             media[1][i] = media[1][i] / media[3][i]
             media[2][i] = media[2][i] / media[3][i]
+            # Unitarizar
+            media[0][i], media[1][i], media[2][i] = unitarizador([media[0][i], media[1][i], media[2][i]])
         # Então dá para fazer um vetor n por 2 com o acumulado e a quantidade de faces
         self.normais = media[0:3]

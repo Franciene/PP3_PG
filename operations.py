@@ -58,3 +58,11 @@ def minus_vetorial(v1, v2):
 def modulo_vetorial(v):
     result = (v[0] ** 2 + v[1] ** 2 + v[2] ** 2) ** 0.5
     return result
+
+
+def unitarizador(v):
+    mod = modulo_vetorial(v)
+    x = v[0] / mod
+    y = v[1] / mod
+    z = v[2] / mod
+    return [x, y, z]

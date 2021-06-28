@@ -4,12 +4,12 @@ import math
 
 class Cenario:
     def __init__(self):
-        self.cena = [];
-
+        self.cena = []
         self.transformacao = [[1, 0, 0, 0],
                                [0, 1, 0, 0],
                                [0, 0, 1, 0],
                                [0, 0, 0, 1]]
+        self.luz = []
 
     def setCamera(self, e, g, t):
         n = division_vetorial(minus_vetorial(g, e), modulo_vetorial(minus_vetorial(g, e)))
@@ -24,6 +24,9 @@ class Cenario:
              [0, 0, 1, -e[2]],
              [0, 0, 0, 1]]
         self.transformacao = multMatriz(R, T)
+
+    def set_luz(self, x, y, z, intensidade):
+        self.luz = [x, y, z, intensidade]
 
     def setProjecao(self, fov, ratio, z_near, z_far):
         tangente = math.sin(fov * math.pi / 180)

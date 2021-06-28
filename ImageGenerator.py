@@ -6,22 +6,26 @@ import math
 
 def gerar_imagem(cenario, largura, altura):
     im = Image.new('RGB', (largura, altura))  # create the Image of size 1 pixel
-    colors = [ImageColor.getrgb("hsl(32, 48.2%, 37.8%)"), ImageColor.getrgb("hsl(197, 57.6%, 66.7%)")]
+    colors = [[32, 48.2], [197, 57.6]]
+    # colors = [ImageColor.getrgb("hsl(32, 48.2%, 37.8%)"), ImageColor.getrgb("hsl(197, 57.6%, 66.7%)")]
+    fonte = cenario.luz[0:3]
+    intensidade = cenario.luz[3]
 
     for i in range(len(cenario.cena)):
         objeto = cenario.cena[i]
+        intensidades = intensidade_luz(objeto, fonte, intensidade)
         color = colors[i]
         for face in objeto.faces:
             p1_idx, p2_idx, p3_idx = face
             p1 = objeto.vertices[p1_idx - 1]
             p2 = objeto.vertices[p2_idx - 1]
             p3 = objeto.vertices[p3_idx - 1]
-            rasteriza_face(im, p1, p2, p3, color)
+            rasteriza_face(im, p1, p2, p3, color, intensidades[p1_idx - 1], intensidades[p2_idx - 1], intensidades[p3_idx - 1])
 
     im.save('Gato invisível.png')
 
 
-def rasteriza_face(im, p1, p2, p3, color):
+def rasteriza_face(im, p1, p2, p3, color, intensidade1, intensidade2, intensidade3):
     lista_x = [p1[0], p2[0], p3[0]]
     min_x = int(min(lista_x))
 
@@ -33,17 +37,19 @@ def rasteriza_face(im, p1, p2, p3, color):
     """0 pro maior, 1 pro menor"""
     lista_y = [[0] * (max_x + 1 - min_x), [math.inf] * (max_x + 1 - min_x)]
 
-    inc_line(im, int(p1[0]), int(p1[1]), int(p2[0]), int(p2[1]), color, lista_y, min_x)
-    inc_line(im, int(p2[0]), int(p2[1]), int(p3[0]), int(p3[1]), color, lista_y, min_x)
-    inc_line(im, int(p3[0]), int(p3[1]), int(p1[0]), int(p1[1]), color, lista_y, min_x)
+    inc_line(im, int(p1[0]), int(p1[1]), int(p2[0]), int(p2[1]), intensidade1, intensidade2, color, lista_y, min_x)
+    inc_line(im, int(p2[0]), int(p2[1]), int(p3[0]), int(p3[1]), intensidade2, intensidade3, color, lista_y, min_x)
+    inc_line(im, int(p3[0]), int(p3[1]), int(p1[0]), int(p1[1]), intensidade3, intensidade1, color, lista_y, min_x)
 
-    for i in range(max_x + 1 - min_x):
-        draw_line(im, min_x + i, lista_y[0][i], lista_y[1][i], color)
+    # for i in range(max_x + 1 - min_x):
+    #     if lista_y[0][i] - lista_y[1][i] > 1:
+    #         draw_line(im, min_x + i, lista_y[0][i], lista_y[1][i], color)
 
 
-def inc_line(image, x1, y1, x2, y2, color, lista_y, min_x):
+def inc_line(image, x1, y1, x2, y2, int1, int2, color, lista_y, min_x):
     dx = x2 - x1
     dy = y2 - y1
+    # cor = ImageColor.getrgb("hsl({0}, {1}%, {2}%)".format(color[0], color[1], 10))
 
     fator = max(abs(dx), abs(dy))
     if fator == 0:
@@ -51,7 +57,9 @@ def inc_line(image, x1, y1, x2, y2, color, lista_y, min_x):
             lista_y[0][int(x1) - min_x] = int(y1)
         if y1 < lista_y[1][int(x1) - min_x]:
             lista_y[1][int(x1) - min_x] = int(y1)
-        image.putpixel((int(x1), int(y1)), color)
+        intensidade = (int1 + int2) / 2
+        cor = ImageColor.getrgb("hsl({0}, {1}%, {2}%)".format(color[0], color[1], intensidade))
+        image.putpixel((int(x1), int(y1)), cor)
         return
 
     inc_x = dx / fator
@@ -60,28 +68,39 @@ def inc_line(image, x1, y1, x2, y2, color, lista_y, min_x):
     x = x1
     y = y1
 
+    intens = int1
+    inc_intens = int2 - int1 / fator
+
     while round(x) != x2 or round(y) != y2:
         if int(x) >= 0 and int(y) >= 0:
             if y > lista_y[0][int(x) - min_x]:
                 lista_y[0][int(x) - min_x] = int(y)
             if y < lista_y[1][int(x) - min_x]:
                 lista_y[1][int(x) - min_x] = int(y)
-            image.putpixel((int(x), int(y)), color)
+            cor = ImageColor.getrgb("hsl({0}, {1}%, {2}%)".format(color[0], color[1], intens))
+            image.putpixel((int(x), int(y)), cor)
         x = x + inc_x
         y = y + inc_y
+        intens = intens + inc_intens
 
 
 def draw_line(image, x, y1, y2, color):
     for i in range(int(abs(y1 - y2)) + 1):
-        image.putpixel((int(x), int(y2 + i)), color)
+        cor = ImageColor.getrgb("hsl({0}, {1}%, {2}%)".format(color[0], color[1], 50))
+        image.putpixel((int(x), int(y2 + i)), cor)
 
 
 def intensidade_luz(objeto, fonte, intensidade):
     """Retorna um vetor de intensidade de todos os vértices"""
-    for normal in objeto.normais:
-        coef_difusa = 10
+    intensidades = []
+    for i in range(len(objeto.vertices)):
+        normal = [objeto.normais[0][i], objeto.normais[1][i], objeto.normais[2][i]]
+        coef_difusa = 0.4
         cos_theta = mult_escalar_vetorial(fonte, normal) / (modulo_vetorial(fonte) * modulo_vetorial(normal))
-        difusa = intensidade * coef_difusa * cos_theta
+        difusa = abs(intensidade * coef_difusa * cos_theta)
+        intensidades.append(difusa + 10)
+
+    return intensidades
 
 
 if __name__ == '__main__':
