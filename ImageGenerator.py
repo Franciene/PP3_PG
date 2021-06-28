@@ -37,19 +37,17 @@ def rasteriza_face(im, p1, p2, p3, color, intensidade1, intensidade2, intensidad
     """0 pro maior, 1 pro menor"""
     lista_y = [[0] * (max_x + 1 - min_x), [math.inf] * (max_x + 1 - min_x)]
 
-    inc_line(im, int(p1[0]), int(p1[1]), int(p2[0]), int(p2[1]), intensidade1, intensidade2, color, lista_y, min_x)
-    inc_line(im, int(p2[0]), int(p2[1]), int(p3[0]), int(p3[1]), intensidade2, intensidade3, color, lista_y, min_x)
-    inc_line(im, int(p3[0]), int(p3[1]), int(p1[0]), int(p1[1]), intensidade3, intensidade1, color, lista_y, min_x)
+    inc_line(int(p1[0]), int(p1[1]), int(p2[0]), int(p2[1]), lista_y, min_x)
+    inc_line(int(p2[0]), int(p2[1]), int(p3[0]), int(p3[1]), lista_y, min_x)
+    inc_line(int(p3[0]), int(p3[1]), int(p1[0]), int(p1[1]), lista_y, min_x)
 
-    # for i in range(max_x + 1 - min_x):
-    #     if lista_y[0][i] - lista_y[1][i] > 1:
-    #         draw_line(im, min_x + i, lista_y[0][i], lista_y[1][i], color)
+    for i in range(max_x + 1 - min_x):
+        draw_line(im, min_x + i, lista_y[0][i], lista_y[1][i], 50, 50, color)
 
 
-def inc_line(image, x1, y1, x2, y2, int1, int2, color, lista_y, min_x):
+def inc_line(x1, y1, x2, y2, lista_y, min_x):
     dx = x2 - x1
     dy = y2 - y1
-    # cor = ImageColor.getrgb("hsl({0}, {1}%, {2}%)".format(color[0], color[1], 10))
 
     fator = max(abs(dx), abs(dy))
     if fator == 0:
@@ -57,9 +55,6 @@ def inc_line(image, x1, y1, x2, y2, int1, int2, color, lista_y, min_x):
             lista_y[0][int(x1) - min_x] = int(y1)
         if y1 < lista_y[1][int(x1) - min_x]:
             lista_y[1][int(x1) - min_x] = int(y1)
-        intensidade = (int1 + int2) / 2
-        cor = ImageColor.getrgb("hsl({0}, {1}%, {2}%)".format(color[0], color[1], intensidade))
-        image.putpixel((int(x1), int(y1)), cor)
         return
 
     inc_x = dx / fator
@@ -68,26 +63,29 @@ def inc_line(image, x1, y1, x2, y2, int1, int2, color, lista_y, min_x):
     x = x1
     y = y1
 
-    intens = int1
-    inc_intens = int2 - int1 / fator
-
     while round(x) != x2 or round(y) != y2:
         if int(x) >= 0 and int(y) >= 0:
             if y > lista_y[0][int(x) - min_x]:
                 lista_y[0][int(x) - min_x] = int(y)
             if y < lista_y[1][int(x) - min_x]:
                 lista_y[1][int(x) - min_x] = int(y)
-            cor = ImageColor.getrgb("hsl({0}, {1}%, {2}%)".format(color[0], color[1], intens))
-            image.putpixel((int(x), int(y)), cor)
         x = x + inc_x
         y = y + inc_y
-        intens = intens + inc_intens
 
 
-def draw_line(image, x, y1, y2, color):
+def draw_line(image, x, y1, y2, int1, int2, color):
+    if y1 == y2:
+        intens = (int1 + int2) / 2
+        cor = ImageColor.getrgb("hsl({0}, {1}%, {2}%)".format(color[0], color[1], intens))
+        image.putpixel((int(x), int(y1)), cor)
+        return
+
+    intens = int1
+    inc_intens = (int2 - int1) / abs(y1 - y2)
     for i in range(int(abs(y1 - y2)) + 1):
-        cor = ImageColor.getrgb("hsl({0}, {1}%, {2}%)".format(color[0], color[1], 50))
+        cor = ImageColor.getrgb("hsl({0}, {1}%, {2}%)".format(color[0], color[1], intens))
         image.putpixel((int(x), int(y2 + i)), cor)
+        intens = intens + inc_intens
 
 
 def intensidade_luz(objeto, fonte, intensidade):
