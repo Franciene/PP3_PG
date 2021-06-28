@@ -35,55 +35,67 @@ def rasteriza_face(im, p1, p2, p3, color, intensidade1, intensidade2, intensidad
     max_x = int(max(lista_x))
 
     """0 pro maior, 1 pro menor"""
-    lista_y = [[0] * (max_x + 1 - min_x), [math.inf] * (max_x + 1 - min_x)]
+    lista_y = [[0] * (max_x + 1 - min_x),
+               [math.inf] * (max_x + 1 - min_x),
+               [0] * (max_x + 1 - min_x),
+               [0] * (max_x + 1 - min_x)]
 
-    inc_line(int(p1[0]), int(p1[1]), int(p2[0]), int(p2[1]), lista_y, min_x)
-    inc_line(int(p2[0]), int(p2[1]), int(p3[0]), int(p3[1]), lista_y, min_x)
-    inc_line(int(p3[0]), int(p3[1]), int(p1[0]), int(p1[1]), lista_y, min_x)
+    inc_line(int(p1[0]), int(p1[1]), int(p2[0]), int(p2[1]), intensidade1, intensidade2, lista_y, min_x)
+    inc_line(int(p2[0]), int(p2[1]), int(p3[0]), int(p3[1]), intensidade2, intensidade3, lista_y, min_x)
+    inc_line(int(p3[0]), int(p3[1]), int(p1[0]), int(p1[1]), intensidade3, intensidade1, lista_y, min_x)
 
     for i in range(max_x + 1 - min_x):
-        draw_line(im, min_x + i, lista_y[0][i], lista_y[1][i], 50, 50, color)
+        draw_line(im, min_x + i, lista_y[0][i], lista_y[1][i], lista_y[2][i], lista_y[3][i], color)
 
 
-def inc_line(x1, y1, x2, y2, lista_y, min_x):
+def inc_line(x1, y1, x2, y2, int1, int2, lista_y, min_x):
     dx = x2 - x1
     dy = y2 - y1
+    dint = int2 - int1
 
     fator = max(abs(dx), abs(dy))
     if fator == 0:
+        media = (int1 + int2) / 2
         if y1 > lista_y[0][int(x1) - min_x]:
             lista_y[0][int(x1) - min_x] = int(y1)
+            lista_y[2][int(x1) - min_x] = int(media)
         if y1 < lista_y[1][int(x1) - min_x]:
             lista_y[1][int(x1) - min_x] = int(y1)
+            lista_y[3][int(x1) - min_x] = int(media)
         return
 
     inc_x = dx / fator
     inc_y = dy / fator
+    inc_int = dint / fator
 
     x = x1
     y = y1
+    intens = int1
 
     while round(x) != x2 or round(y) != y2:
         if int(x) >= 0 and int(y) >= 0:
             if y > lista_y[0][int(x) - min_x]:
                 lista_y[0][int(x) - min_x] = int(y)
+                lista_y[2][int(x) - min_x] = int(intens)
             if y < lista_y[1][int(x) - min_x]:
                 lista_y[1][int(x) - min_x] = int(y)
+                lista_y[3][int(x) - min_x] = int(intens)
         x = x + inc_x
         y = y + inc_y
+        intens = intens + inc_int
 
 
 def draw_line(image, x, y1, y2, int1, int2, color):
     if y1 == y2:
         intens = (int1 + int2) / 2
-        cor = ImageColor.getrgb("hsl({0}, {1}%, {2}%)".format(color[0], color[1], intens))
+        cor = ImageColor.getrgb("hsl({0}, {1}%, {2}%)".format(color[0], color[1], int(intens)))
         image.putpixel((int(x), int(y1)), cor)
         return
 
     intens = int1
     inc_intens = (int2 - int1) / abs(y1 - y2)
     for i in range(int(abs(y1 - y2)) + 1):
-        cor = ImageColor.getrgb("hsl({0}, {1}%, {2}%)".format(color[0], color[1], intens))
+        cor = ImageColor.getrgb("hsl({0}, {1}%, {2}%)".format(color[0], color[1], int(intens)))
         image.putpixel((int(x), int(y2 + i)), cor)
         intens = intens + inc_intens
 
